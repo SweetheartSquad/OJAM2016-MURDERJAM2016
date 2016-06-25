@@ -77,6 +77,7 @@
             slot:7
         }
     };
+    currentJammer = null;
     
     function setup(){
         // called when loader completes
@@ -92,9 +93,8 @@
             jammer.grp = new PIXI.Container();
             jammer.grp.buttonMode = true;
             jammer.grp.interactive = true;
-            jammer.grp.on("mouseover", function(){
-               console.log("test"); 
-            });  
+            jammer.grp.on("mouseover", onMouseOver.bind(jammer));  
+            jammer.grp.on("mouseout", onMouseOut.bind(jammer));  
                 
             if(k != "org"){
                 jammer.grp.x = jammer.slot/6 * window.innerWidth;
@@ -150,7 +150,8 @@
         }
 
 
-
+        feed = new PIXI.Text("",{font:'1em Arial'});
+        scene.addChild(feed);
 
         /*var sprite = new PIXI.Sprite(PIXI.loader.resources["assets/player.png"].texture);
         
@@ -164,13 +165,22 @@
     }
     
     function main(){
+        
+        feed.text += currentJammer ? currentJammer.name : "";
+        
         renderer.resize(window.innerWidth, window.innerHeight);
         renderer.render(scene);
         
         requestAnimationFrame(main);
     }
     
+    function onMouseOver(event){
+        currentJammer = this;
+    }
     
+    function onMouseOut(event){
+        currentJammer = null;
+    }
 
 </script>
 </body>
