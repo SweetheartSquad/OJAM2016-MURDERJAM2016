@@ -1,0 +1,176 @@
+<!doctype html>
+<head>
+    <meta charset="utf-8">
+    <title>Hello World</title>
+    
+    <style>
+        html,body{
+            padding:0;
+            margin:0;
+        }
+    </style>
+</head>
+
+<body>
+<script src="pixi.min.js"></script>
+<script>
+    
+    // create renderer
+    var renderer = PIXI.autoDetectRenderer(
+        1280,720,
+        {antiAlias:false, transparent:false, resolution:1}
+    );
+    renderer.backgroundColor = 0xFF0000;
+    renderer.view.style.position = "absolute";
+    renderer.view.style.display = "block";
+    renderer.autoResize = true;
+    renderer.resize(window.innerWidth, window.innerHeight);
+    
+    // add the canvas to the html document
+    document.body.appendChild(renderer.view);
+    
+    // create stage a container object 
+    var scene = new PIXI.Container();
+    
+    
+    PIXI.loader
+        .add("assets/textures.json")
+        .on("progress", loadProgressHandler)
+        .load(setup);
+    
+    
+    function loadProgressHandler(loader, resource){
+        // called during loading
+        
+        console.log("loading: " + resource.url);
+        console.log("progress: " + loader.progress+"%");
+        
+    }
+    
+    var jammers = {
+        "bro":{
+            name:"Austin",
+            slot:1
+        },
+        "pro":{
+            name:"Austin",
+            slot:2
+        },
+        "art":{
+            name:"Austin",
+            slot:3
+        },
+        "odd":{
+            name:"Austin",
+            slot:4
+        },
+        "new":{
+            name:"Austin",
+            slot:5
+        },
+        "app":{
+         name:"Jess",
+            slot:6
+        },
+        "org":{
+            name:"Austin",
+            slot:7
+        }
+    };
+    
+    function setup(){
+        // called when loader completes
+        console.log("All files loaded");
+
+
+
+        // create an array of textures from an image path
+
+        for(var k in jammers){
+            if(k == "bro"){
+            var jammer = jammers[k];
+            jammer.grp = new PIXI.Container();
+            jammer.grp.buttonMode = true;
+            jammer.grp.interactive = true;
+            jammer.grp.on("mouseover", function(){
+               console.log("test"); 
+            });  
+                
+            if(k != "org"){
+                jammer.grp.x = jammer.slot/6 * window.innerWidth;
+                jammer.grp.y = window.innerHeight-100;
+            }else{
+                jammer.grp.x = window.innerWidth/2;
+            }
+            
+            jammer.idleFrames = [];
+            for (var i = 0; i < 4; i++) {
+                var s = k;
+                s += "_idle_";
+                s += i;
+                s += ".gif";
+                // magically works since the spritesheet was loaded with the pixi loader
+                jammer.idleFrames.push(PIXI.Texture.fromFrame(s));
+            }
+            
+            jammer.idle = new PIXI.extras.MovieClip(jammer.idleFrames);
+            jammer.idle.animationSpeed = 0.16;
+            jammer.idle.anchor.x = 0.5;
+            jammer.idle.anchor.y = 1;
+            
+            jammer.idle.play();
+            jammer.grp.addChild(jammer.idle);
+            
+            
+            jammer.talkFrames = [];
+            for (var i = 0; i < 4; i++) {
+                var s = k;
+                s += "_talk_";
+                s += i;
+                s += ".gif";
+                // magically works since the spritesheet was loaded with the pixi loader
+                jammer.talkFrames.push(PIXI.Texture.fromFrame(s));
+            }
+            jammer.talk = new PIXI.extras.MovieClip(jammer.talkFrames);
+            jammer.talk.animationSpeed = 0.16;
+            jammer.talk.anchor.x = 0.5;
+            jammer.talk.anchor.y = 1;
+                
+            jammer.grp.addChild(jammer.talk);
+            jammer.talk.visible = false;
+            
+            jammer.label = new PIXI.Text(jammer.name, {font:'2em Arial'});
+            jammer.label.anchor.x = 0.5;
+            jammer.label.anchor.y = 0.5;
+                
+            jammer.grp.addChild(jammer.label);
+                
+            scene.addChild(jammer.grp);
+            }
+        }
+
+
+
+
+        /*var sprite = new PIXI.Sprite(PIXI.loader.resources["assets/player.png"].texture);
+        
+        sprite.x = 50;
+        sprite.y = 100;
+        
+        scene.addChild(sprite);*/
+        
+        
+        main();
+    }
+    
+    function main(){
+        renderer.resize(window.innerWidth, window.innerHeight);
+        renderer.render(scene);
+        
+        requestAnimationFrame(main);
+    }
+    
+    
+
+</script>
+</body>
