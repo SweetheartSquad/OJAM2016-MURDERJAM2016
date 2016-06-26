@@ -24,7 +24,7 @@
 <script>
     
     // create renderer
-    var size = [1280, 720];
+    var size = [1920, 1080];
     var ratio = size[0] / size[1];
     var renderer = PIXI.autoDetectRenderer(
         size[0],size[1],
@@ -168,6 +168,8 @@
         menu.frames = [];
         for(var i = 0; i <= 3; ++i){
             var sprite = new PIXI.Sprite(PIXI.utils.TextureCache["assets/intro_"+i+".png"]);
+            sprite.width = size[0];
+            sprite.height = size[1];
             if(i != 0){
                 sprite.visible = false;
             }
@@ -188,6 +190,8 @@
         
         
         game.bg = new PIXI.Sprite(PIXI.loader.resources.bg.texture);
+        game.bg.width = size[0];
+        game.bg.height = size[1];
         game.addChild(game.bg);
 
         for(var k in jammers){
@@ -195,7 +199,6 @@
             var jammer = jammers[k];
             
             jammer.lines = PIXI.loader.resources[k].data.lines;
-                console.log(jammer.lines);
             
             jammer.grp = new PIXI.Container();
             jammer.btngrp = new PIXI.Container();
@@ -316,6 +319,8 @@
         
         bio = new PIXI.Container();
         bio.bg = new PIXI.Sprite(PIXI.loader.resources.bioBg.texture);
+        bio.bg.width = size[0];
+        bio.bg.height = size[1];
         bio.addChild(bio.bg);
         
         bio.nameLabel = new PIXI.Text("Name: ",{
