@@ -422,10 +422,15 @@
         var switched = currentJammer != this;
         currentJammer = this;
         currentLine += 1;
-        feed.targetText = currentJammer.lines[currentLine];
+        if(currentLine < currentJammer.lines.length){
+            feed.targetText = currentJammer.lines[currentLine];
+        }else{
+            feed.targetText = getEnder();
+        }
         feed.text = currentJammer.name + ":\n" + (switched ? getStarter() : "");
         feed.charOffset = 0;
         feed.style.fill = currentJammer.color;
+            
     }
     function viewBio(event){
         bio.visible = true;
@@ -462,6 +467,17 @@
             "...anyway - ",
             "So as I was saying - ",
             "...where was I? Oh - "
+        ];
+        var r = Math.floor(Math.random()*t.length);
+        return t[r];
+    }
+    
+    // returns a random little ending sentence thing
+    function getEnder(){
+        var t=[
+            "That's basically what happened.",
+            "I think I said everything I know.",
+            "Now what?"
         ];
         var r = Math.floor(Math.random()*t.length);
         return t[r];
