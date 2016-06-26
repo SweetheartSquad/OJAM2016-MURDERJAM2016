@@ -359,6 +359,8 @@
         bio.btnX.buttonMode = true;
         bio.btnX.interactive = true;
         bio.btnX.on("click", closeBio);
+        bio.btnX.on("mouseover", onMouseOver);
+        bio.btnX.on("mouseout", onMouseOut);
         
         bio.addChild(bio.nameLabel);
         bio.addChild(bio.ageLabel);
@@ -430,7 +432,11 @@
     
     // tint buttons on hover
     function onMouseOver(event){
-        event.target.tint = parseInt(this.color.substr(1),16);
+        if(this.color){
+            event.target.tint = parseInt(this.color.substr(1),16);
+        }else{
+            event.target.tint = 0x999999;
+        }
     }
     function onMouseOut(event){
         event.target.tint = 0xFFFFFF; 
