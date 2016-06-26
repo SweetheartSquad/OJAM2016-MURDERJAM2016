@@ -8,6 +8,14 @@
             padding:0;
             margin:0;
         }
+        canvas, img {
+            image-rendering: optimizeSpeed;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: optimize-contrast;
+            image-rendering: pixelated;
+            -ms-interpolation-mode: nearest-neighbor;
+        }
     </style>
 </head>
 
@@ -16,15 +24,17 @@
 <script>
     
     // create renderer
+    var size = [1280, 720];
+    var ratio = size[0] / size[1];
     var renderer = PIXI.autoDetectRenderer(
-        1280,720,
+        size[0],size[1],
         {antiAlias:false, transparent:false, resolution:1}
     );
+    PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
     renderer.backgroundColor = 0xFF0000;
     renderer.view.style.position = "absolute";
     renderer.view.style.display = "block";
-    renderer.autoResize = true;
-    renderer.resize(window.innerWidth, window.innerHeight);
+    window.onresize = onResize;
     
     // add the canvas to the html document
     document.body.appendChild(renderer.view);
@@ -34,6 +44,22 @@
     
     
     PIXI.loader
+        .add("bro", "assets/text/bro.json")
+        .add("pro", "assets/text/pro.json")
+        .add("art", "assets/text/art.json")
+        .add("odd", "assets/text/odd.json")
+        .add("new", "assets/text/new.json")
+        .add("app", "assets/text/app.json")
+        .add("assets/intro_0.png")
+        .add("assets/intro_1.png")
+        .add("assets/intro_2.png")
+        .add("assets/intro_3.png")
+        .add("bg", "assets/bg.png")
+        .add("btnListen", "assets/btns/listen.png")
+        .add("btnBio", "assets/btns/bio.png")
+        .add("btnX", "assets/btns/x.png")
+        .add("btnAccuse", "assets/btns/accuse.png")
+        .add("bioBg", "assets/bioBg.png")
         .add("assets/textures.json")
         .on("progress", loadProgressHandler)
         .load(setup);
@@ -50,59 +76,143 @@
     var jammers = {
         "bro":{
             name:"Austin",
-            slot:1
+            slot:1,
+            color:"#FF3333",
+            age:"23",
+            job:"Student (6th year)",
+            style:"Retro Platformer",
+            traits:[
+                "outgoing",
+                "supportive"
+            ]
         },
         "pro":{
-            name:"Austin",
-            slot:2
+            name:"Kevin",
+            slot:2,
+            color:"#FF3333",
+            age:"26",
+            job:"Professional Jammer",
+            style:"Unity Die-hard",
+            traits:[
+                "blunt",
+                "principled"
+            ]
         },
         "art":{
-            name:"Austin",
-            slot:3
+            name:"Mackenzie",
+            slot:3,
+            color:"#FF3333",
+            age:"19",
+            job:"Professional Dropout",
+            style:"Artist",
+            traits:[
+                "apathetic"
+            ]
         },
         "odd":{
-            name:"Austin",
-            slot:4
+            name:"@brrrrdd",
+            slot:4,
+            color:"#FF3333",
+            age:"???",
+            job:"???",
+            style:"Weird Games",
+            traits:[
+                "withdrawn",
+                "observant"
+            ]
         },
         "new":{
-            name:"Austin",
-            slot:5
+            name:"Hazel",
+            slot:5,
+            color:"#FF3333",
+            age:"21",
+            job:"Student",
+            style:"Twine Initiate",
+            traits:[
+                "cheerful",
+                "curious"
+            ]
         },
         "app":{
          name:"Jess",
-            slot:6
+            slot:6,
+            color:"#FF3333",
+            age:"21",
+            job:"Software Developer",
+            style:"Mobile Free-to-play",
+            traits:[
+                "outgoing",
+                "driven"
+            ]
         },
         "org":{
-            name:"Austin",
-            slot:7
+            name:"",
+            slot:7,
+            color:"#FF3333",
+            age:"",
+            job:"",
+            style:"",
+            traits:[
+                ""
+            ]
         }
     };
     currentJammer = null;
+    
+    
+    var menu = new PIXI.Container();
+    menu.currentFrame = 0;
+    var game = new PIXI.Container();
     
     function setup(){
         // called when loader completes
         console.log("All files loaded");
 
 
-
-        // create an array of textures from an image path
+        
+        menu.frames = [];
+        for(var i = 0; i <= 3; ++i){
+            var sprite = new PIXI.Sprite(PIXI.utils.TextureCache["assets/intro_"+i+".png"]);
+            if(i != 0){
+                sprite.visible = false;
+            }
+            menu.frames.push(sprite);
+            menu.addChild(sprite);
+        }
+        menuClick = new PIXI.Text("Click to continue",{
+            font:"bold 24px Georgia"
+        });
+        menuClick.anchor.x = 0.5;
+        menuClick.x = size[0]/2;
+        menuClick.y = size[1]-100;
+        menuClick.buttonMode = true;
+        menuClick.interactive = true;
+        menuClick.on("click", nextFrame);
+        menu.addChild(menuClick);
+        
+        
+        
+        game.bg = new PIXI.Sprite(PIXI.loader.resources.bg.texture);
+        game.addChild(game.bg);
 
         for(var k in jammers){
             if(k == "bro"){
             var jammer = jammers[k];
+            
+            jammer.lines = PIXI.loader.resources[k].data.lines;
+                console.log(jammer.lines);
+            
             jammer.grp = new PIXI.Container();
-            jammer.grp.buttonMode = true;
-            jammer.grp.interactive = true;
-            jammer.grp.on("mouseover", onMouseOver.bind(jammer));  
-            jammer.grp.on("mouseout", onMouseOut.bind(jammer));  
                 
             if(k != "org"){
-                jammer.grp.x = jammer.slot/6 * window.innerWidth;
-                jammer.grp.y = window.innerHeight-100;
+                jammer.grp.x = jammer.slot/6 * size[0];
+                jammer.grp.y = size[1]-100;
             }else{
-                jammer.grp.x = window.innerWidth/2;
+                jammer.grp.x = size[0]/2;
             }
             
+            
+            // animations
             jammer.idleFrames = [];
             for (var i = 0; i < 4; i++) {
                 var s = k;
@@ -134,52 +244,212 @@
             jammer.talk = new PIXI.extras.MovieClip(jammer.talkFrames);
             jammer.talk.animationSpeed = 0.16;
             jammer.talk.anchor.x = 0.5;
-            jammer.talk.anchor.y = 1;
+            jammer.talk.anchor.y = 0;
                 
             jammer.grp.addChild(jammer.talk);
             jammer.talk.visible = false;
+                
+                
+                
+                
             
-            jammer.label = new PIXI.Text(jammer.name, {font:'2em Arial'});
+            
+            // interaction buttons
+            jammer.btnListen = new PIXI.Sprite(PIXI.loader.resources.btnListen.texture);
+            jammer.btnListen.anchor.x = 0.5;
+            jammer.btnListen.anchor.y = 1;
+            jammer.btnListen.x -= 64;
+            jammer.btnListen.buttonMode = true;
+            jammer.btnListen.interactive = true;
+            jammer.btnListen.on("click", sayNextLine.bind(jammer));
+            jammer.btnListen.on("mouseover", onMouseOver.bind(jammer));
+            jammer.btnListen.on("mouseout", onMouseOut);
+            jammer.grp.addChild(jammer.btnListen);
+            
+                
+            jammer.btnBio = new PIXI.Sprite(PIXI.loader.resources.btnBio.texture);
+            jammer.btnBio.anchor.x = 0.5;
+            jammer.btnBio.anchor.y = 1;
+            jammer.btnBio.buttonMode = true;
+            jammer.btnBio.interactive = true;
+            jammer.btnBio.on("click", viewBio.bind(jammer));
+            jammer.btnBio.on("mouseover", onMouseOver.bind(jammer));
+            jammer.btnBio.on("mouseout", onMouseOut);
+            jammer.grp.addChild(jammer.btnBio);
+            
+                
+            jammer.btnAccuse = new PIXI.Sprite(PIXI.loader.resources.btnAccuse.texture);
+            jammer.btnAccuse.anchor.x = 0.5;
+            jammer.btnAccuse.anchor.y = 1;
+            jammer.btnAccuse.x += 64;
+            jammer.btnAccuse.buttonMode = true;
+            jammer.btnAccuse.interactive = true;
+            jammer.btnAccuse.on("click", accuse.bind(jammer));
+            jammer.btnAccuse.on("mouseover", onMouseOver.bind(jammer));
+            jammer.btnAccuse.on("mouseout", onMouseOut);
+            jammer.grp.addChild(jammer.btnAccuse);
+                
+                
+                
+            // name label
+            jammer.label = new PIXI.Text(jammer.name, {
+                font:'bold 24px Georgia',
+                fill:"#FFF",
+                stroke : jammer.color,
+                strokeThickness : 5
+            });
             jammer.label.anchor.x = 0.5;
-            jammer.label.anchor.y = 0.5;
+            jammer.label.anchor.y = 0;
                 
             jammer.grp.addChild(jammer.label);
                 
-            scene.addChild(jammer.grp);
+            game.addChild(jammer.grp);
             }
         }
 
 
-        feed = new PIXI.Text("",{font:'1em Arial'});
-        scene.addChild(feed);
+        feed = new PIXI.Text("",{
+            font:'bold 24px Georgia'
+        });
+        feed.style.wordWrap = true;
+        feed.style.wordWrapWidth = window.innerWidth;
+        feed.targetText = "";
+        feed.charOffset = 0;
+        game.addChild(feed);
 
-        /*var sprite = new PIXI.Sprite(PIXI.loader.resources["assets/player.png"].texture);
         
-        sprite.x = 50;
-        sprite.y = 100;
+        bio = new PIXI.Container();
+        bio.bg = new PIXI.Sprite(PIXI.loader.resources.bioBg.texture);
+        bio.addChild(bio.bg);
         
-        scene.addChild(sprite);*/
+        bio.nameLabel = new PIXI.Text("Name: ",{
+            font:"bold 24px Georgia"
+        });
+        bio.nameLabel.x = size[0]*0.36;
+        bio.nameLabel.y = size[1]*0.33;
+        bio.nameLabel.rotation = -0.025;
         
+        bio.ageLabel = new PIXI.Text("Age: ",{
+            font:"24px Georgia"
+        });
+        bio.ageLabel.x = size[0]*0.33;
+        bio.ageLabel.y = size[1]*0.4;
+        bio.ageLabel.rotation = -0.025;
         
+        bio.jobLabel = new PIXI.Text("Job: ",{
+            font:"24px Georgia"
+        });
+        bio.jobLabel.x = size[0]*0.33;
+        bio.jobLabel.y = size[1]*0.45;
+        bio.jobLabel.rotation = -0.025;
+        
+        bio.styleLabel = new PIXI.Text("Style: ",{
+            font:"24px Georgia"
+        });
+        bio.styleLabel.x = size[0]*0.33;
+        bio.styleLabel.y = size[1]*0.5;
+        bio.styleLabel.rotation = -0.025;
+        
+        bio.traitsLabel = new PIXI.Text("Traits: ",{
+            font:"24px Georgia"
+        });
+        bio.traitsLabel.x = size[0]*0.33;
+        bio.traitsLabel.y = size[1]*0.6;
+        bio.traitsLabel.rotation = -0.025;
+        
+        bio.btnX = new PIXI.Sprite(PIXI.loader.resources.btnX.texture);
+        bio.btnX.x = size[0]*0.575;
+        bio.btnX.y = size[1]*0.18;
+        bio.btnX.buttonMode = true;
+        bio.btnX.interactive = true;
+        bio.btnX.on("click", closeBio);
+        
+        bio.addChild(bio.nameLabel);
+        bio.addChild(bio.ageLabel);
+        bio.addChild(bio.jobLabel);
+        bio.addChild(bio.styleLabel);
+        bio.addChild(bio.traitsLabel);
+        bio.addChild(bio.btnX);
+        game.addChild(bio);
+        
+        scene.addChild(menu);
+        scene.addChild(game);
+        game.visible = false;
+        
+        onResize();
+        closeBio();
         main();
     }
     
+    var currentLine = -1;
+    
     function main(){
         
-        feed.text += currentJammer ? currentJammer.name : "";
+        if(game.visible){
+            if(feed.charOffset < feed.targetText.length){
+                feed.text += feed.targetText.substr(feed.charOffset,1);
+                feed.charOffset += 1;
+            }
+        }
         
-        renderer.resize(window.innerWidth, window.innerHeight);
         renderer.render(scene);
-        
         requestAnimationFrame(main);
     }
     
-    function onMouseOver(event){
-        currentJammer = this;
+    
+    function nextFrame(){
+        menu.frames[menu.currentFrame].visible = false;
+        menu.currentFrame += 1;
+        if(menu.currentFrame < menu.frames.length){
+            menu.frames[menu.currentFrame].visible = true;
+        }else{
+            menu.visible = false;
+            game.visible = true;
+        }
     }
     
+    function sayNextLine(event){
+        currentJammer = this;
+        currentLine += 1;
+        feed.targetText = currentJammer.lines[currentLine];
+        feed.text = "";
+        feed.charOffset = 0;
+    }
+    function viewBio(event){
+        bio.visible = true;
+        bio.nameLabel.text = "Name: " + this.name;
+        bio.ageLabel.text = "Age: " + this.age;
+        bio.jobLabel.text = "Job: " + this.job;
+        bio.styleLabel.text = "Style: " + this.style;
+        bio.traitsLabel.text = "Traits:\n•" + this.traits.join("\n•");
+    }
+    function closeBio(event){
+        bio.visible = false;
+    }
+    function accuse(event){
+        // do something
+    }
+    
+    
+    // tint buttons on hover
+    function onMouseOver(event){
+        event.target.tint = parseInt(this.color.substr(1),16);
+    }
     function onMouseOut(event){
-        currentJammer = null;
+        event.target.tint = 0xFFFFFF; 
+    }
+    
+    
+    function onResize() {
+        if (window.innerWidth / window.innerHeight >= ratio) {
+            var w = window.innerHeight * ratio;
+            var h = window.innerHeight;
+        } else {
+            var w = window.innerWidth;
+            var h = window.innerWidth / ratio;
+        }
+        renderer.view.style.width = w + 'px';
+        renderer.view.style.height = h + 'px';
     }
 
 </script>
