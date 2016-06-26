@@ -27,10 +27,18 @@
     </style>
     
     <script src="vendor/pixi.min.js"></script>
+    <script src="vendor/howler.min.js"></script>
 </head>
 
 <body>
 <script>
+    var bgm = new Howl({
+        urls:["assets/bgm.ogg"],
+        autoplay:true,
+        loop:true,
+        volume:0
+    });
+    bgm.fadeIn(1,3000);
     
     // create renderer
     var size = [1920, 1080];
