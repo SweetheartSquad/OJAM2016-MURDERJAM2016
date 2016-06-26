@@ -76,7 +76,7 @@
     var jammers = {
         "bro":{
             name:"Austin",
-            slot:1,
+            pos:{x:0.2,y:0.5},
             color:"#FF3333",
             age:"23",
             job:"Student (6th year)",
@@ -88,7 +88,7 @@
         },
         "pro":{
             name:"Kevin",
-            slot:2,
+            pos:{x:0.2,y:0.5},
             color:"#FF3333",
             age:"26",
             job:"Professional Jammer",
@@ -100,7 +100,7 @@
         },
         "art":{
             name:"Mackenzie",
-            slot:3,
+            pos:{x:0.2,y:0.5},
             color:"#FF3333",
             age:"19",
             job:"Professional Dropout",
@@ -111,7 +111,7 @@
         },
         "odd":{
             name:"@brrrrdd",
-            slot:4,
+            pos:{x:0.2,y:0.5},
             color:"#FF3333",
             age:"???",
             job:"???",
@@ -123,7 +123,7 @@
         },
         "new":{
             name:"Hazel",
-            slot:5,
+            pos:{x:0.2,y:0.5},
             color:"#FF3333",
             age:"21",
             job:"Student",
@@ -135,7 +135,7 @@
         },
         "app":{
          name:"Jess",
-            slot:6,
+            pos:{x:0.2,y:0.5},
             color:"#FF3333",
             age:"21",
             job:"Software Developer",
@@ -143,17 +143,6 @@
             traits:[
                 "outgoing",
                 "driven"
-            ]
-        },
-        "org":{
-            name:"",
-            slot:7,
-            color:"#FF3333",
-            age:"",
-            job:"",
-            style:"",
-            traits:[
-                ""
             ]
         }
     };
@@ -204,12 +193,8 @@
             
             jammer.grp = new PIXI.Container();
                 
-            if(k != "org"){
-                jammer.grp.x = jammer.slot/6 * size[0];
-                jammer.grp.y = size[1]-100;
-            }else{
-                jammer.grp.x = size[0]/2;
-            }
+            jammer.grp.x = jammer.pos.x * size[0];
+            jammer.grp.y = jammer.pos.y * size[1];
             
             
             // animations
@@ -409,10 +394,11 @@
     }
     
     function sayNextLine(event){
+        var switched = currentJammer != this;
         currentJammer = this;
         currentLine += 1;
         feed.targetText = currentJammer.lines[currentLine];
-        feed.text = "";
+        feed.text = switched ? "...anyway - " : "";
         feed.charOffset = 0;
     }
     function viewBio(event){
