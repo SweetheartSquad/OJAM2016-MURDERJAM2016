@@ -77,6 +77,7 @@
         "bro":{
             name:"Austin",
             pos:{x:0.2,y:0.5},
+            btnpos:0.5,
             color:"#FF3333",
             age:"23",
             job:"Student (6th year)",
@@ -89,6 +90,7 @@
         "pro":{
             name:"Kevin",
             pos:{x:0.2,y:0.5},
+            btnpos:0.5,
             color:"#FF3333",
             age:"26",
             job:"Professional Jammer",
@@ -101,6 +103,7 @@
         "art":{
             name:"Mackenzie",
             pos:{x:0.2,y:0.5},
+            btnpos:0.5,
             color:"#FF3333",
             age:"19",
             job:"Professional Dropout",
@@ -112,6 +115,7 @@
         "odd":{
             name:"@brrrrdd",
             pos:{x:0.2,y:0.5},
+            btnpos:0.5,
             color:"#FF3333",
             age:"???",
             job:"???",
@@ -124,6 +128,7 @@
         "new":{
             name:"Hazel",
             pos:{x:0.2,y:0.5},
+            btnpos:0.5,
             color:"#FF3333",
             age:"21",
             job:"Student",
@@ -136,6 +141,7 @@
         "app":{
          name:"Jess",
             pos:{x:0.2,y:0.5},
+            btnpos:0.5,
             color:"#FF3333",
             age:"21",
             job:"Software Developer",
@@ -192,6 +198,7 @@
                 console.log(jammer.lines);
             
             jammer.grp = new PIXI.Container();
+            jammer.btngrp = new PIXI.Container();
                 
             jammer.grp.x = jammer.pos.x * size[0];
             jammer.grp.y = jammer.pos.y * size[1];
@@ -249,7 +256,7 @@
             jammer.btnListen.on("click", sayNextLine.bind(jammer));
             jammer.btnListen.on("mouseover", onMouseOver.bind(jammer));
             jammer.btnListen.on("mouseout", onMouseOut);
-            jammer.grp.addChild(jammer.btnListen);
+            jammer.btngrp.addChild(jammer.btnListen);
             
                 
             jammer.btnBio = new PIXI.Sprite(PIXI.loader.resources.btnBio.texture);
@@ -260,7 +267,7 @@
             jammer.btnBio.on("click", viewBio.bind(jammer));
             jammer.btnBio.on("mouseover", onMouseOver.bind(jammer));
             jammer.btnBio.on("mouseout", onMouseOut);
-            jammer.grp.addChild(jammer.btnBio);
+            jammer.btngrp.addChild(jammer.btnBio);
             
                 
             jammer.btnAccuse = new PIXI.Sprite(PIXI.loader.resources.btnAccuse.texture);
@@ -272,7 +279,7 @@
             jammer.btnAccuse.on("click", accuse.bind(jammer));
             jammer.btnAccuse.on("mouseover", onMouseOver.bind(jammer));
             jammer.btnAccuse.on("mouseout", onMouseOut);
-            jammer.grp.addChild(jammer.btnAccuse);
+            jammer.btngrp.addChild(jammer.btnAccuse);
                 
                 
                 
@@ -286,9 +293,13 @@
             jammer.label.anchor.x = 0.5;
             jammer.label.anchor.y = 0;
                 
-            jammer.grp.addChild(jammer.label);
+            jammer.btngrp.addChild(jammer.label);
                 
             game.addChild(jammer.grp);
+                
+                
+            jammer.btngrp.y = -jammer.btnpos * jammer.grp.height;
+            jammer.grp.addChild(jammer.btngrp);
             }
         }
 
