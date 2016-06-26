@@ -75,7 +75,7 @@
         .add("btnCheck", "assets/btns/check.png")
         .add("btnAccuse", "assets/btns/accuse.png")
         .add("bioBg", "assets/bioBg.png")
-        .add("assets/textures.json")
+        .add("assets/characters/characters.json")
         .on("progress", loadProgressHandler)
         .load(setup);
     
@@ -272,7 +272,6 @@
         game.addChild(game.bg);
 
         for(var k in jammers){
-            if(k == "bro"){
             var jammer = jammers[k];
             
             jammer.lines = PIXI.loader.resources[k].data.lines;
@@ -286,11 +285,11 @@
             
             // animations
             jammer.idleFrames = [];
-            for (var i = 0; i < 4; i++) {
+            for (var i = 0; i <= 1; ++i) {
                 var s = k;
-                s += "_idle_";
+                s += "_";
                 s += i;
-                s += ".gif";
+                s += ".png";
                 // magically works since the spritesheet was loaded with the pixi loader
                 jammer.idleFrames.push(PIXI.Texture.fromFrame(s));
             }
@@ -302,26 +301,6 @@
             
             jammer.idle.play();
             jammer.grp.addChild(jammer.idle);
-            
-            
-            jammer.talkFrames = [];
-            for (var i = 0; i < 4; i++) {
-                var s = k;
-                s += "_talk_";
-                s += i;
-                s += ".gif";
-                // magically works since the spritesheet was loaded with the pixi loader
-                jammer.talkFrames.push(PIXI.Texture.fromFrame(s));
-            }
-            jammer.talk = new PIXI.extras.MovieClip(jammer.talkFrames);
-            jammer.talk.animationSpeed = 0.16;
-            jammer.talk.anchor.x = 0.5;
-            jammer.talk.anchor.y = 0;
-                
-            jammer.grp.addChild(jammer.talk);
-            jammer.talk.visible = false;
-                
-                
                 
                 
             
@@ -380,7 +359,6 @@
                 
             jammer.btngrp.y = -jammer.btnpos * jammer.grp.height;
             jammer.grp.addChild(jammer.btngrp);
-            }
         }
 
         // speech bubble
