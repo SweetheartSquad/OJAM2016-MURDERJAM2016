@@ -39,7 +39,7 @@
         {antiAlias:false, transparent:false, resolution:1}
     );
     PIXI.SCALE_MODES.DEFAULT = PIXI.SCALE_MODES.NEAREST;
-    renderer.backgroundColor = 0xFF0000;
+    renderer.backgroundColor = 0x375949;
     renderer.view.style.position = "absolute";
     renderer.view.style.display = "block";
     window.onresize = onResize;
@@ -345,10 +345,11 @@
                 
             // name label
             jammer.label = new PIXI.Text(jammer.name, {
-                font:'bold 24px Georgia',
+                font:'bold 32px Georgia',
                 fill:"#FFF",
                 stroke : jammer.color,
-                strokeThickness : 5
+                strokeThickness : 10,
+                lineJoin:"round"
             });
             jammer.label.anchor.x = 0.5;
             jammer.label.anchor.y = 0;
