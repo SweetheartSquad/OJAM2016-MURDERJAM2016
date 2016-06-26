@@ -1,7 +1,7 @@
 <!doctype html>
 <head>
     <meta charset="utf-8">
-    <title>murderjam</title>
+    <title>#MURDERJAM2016</title>
     
     <style>
         html,body{
@@ -58,15 +58,15 @@
         .add("art", "assets/text/art.json")
         .add("odd", "assets/text/odd.json")
         .add("new", "assets/text/new.json")
-        .add("app", "assets/text/app.json")
-        .add("assets/intro_0.png")
-        .add("assets/intro_1.png")
-        .add("assets/intro_2.png")
-        .add("assets/intro_3.png")
-        .add("assets/end_bad_0.png")
-        .add("assets/end_bad_1.png")
-        .add("assets/end_good_0.png")
-        .add("assets/end_good_1.png")
+        .add("app", "assets/text/app.json");
+    for(var i = 0; i <= 2; ++i){
+        PIXI.loader.add("assets/intro_"+i+".png");
+    }for(var i = 0; i <= 0; ++i){
+        PIXI.loader.add("assets/end_bad_"+i+".png");
+    }for(var i = 0; i <= 0; ++i){
+        PIXI.loader.add("assets/end_good_"+i+".png");
+    }
+    PIXI.loader
         .add("assets/end_final.png")
         .add("bg", "assets/bg.png")
         .add("speechBubble", "assets/speechBubble.png")
@@ -188,7 +188,7 @@
 
         // intro slideshow
         menu.frames = [];
-        for(var i = 0; i <= 3; ++i){
+        for(var i = 0; i <= 2; ++i){
             var sprite = new PIXI.Sprite(PIXI.utils.TextureCache["assets/intro_"+i+".png"]);
             sprite.width = size[0];
             sprite.height = size[1];
@@ -212,7 +212,7 @@
         
         //ending slideshows
         endGood.frames = [];
-        for(var i = 0; i <= 1; ++i){
+        for(var i = 0; i <= 0; ++i){
             var sprite = new PIXI.Sprite(PIXI.utils.TextureCache["assets/end_good_"+i+".png"]);
             sprite.width = size[0];
             sprite.height = size[1];
@@ -237,7 +237,7 @@
 
         
         endBad.frames = [];
-        for(var i = 0; i <= 1; ++i){
+        for(var i = 0; i <= 0; ++i){
             var sprite = new PIXI.Sprite(PIXI.utils.TextureCache["assets/end_bad_"+i+".png"]);
             sprite.width = size[0];
             sprite.height = size[1];
