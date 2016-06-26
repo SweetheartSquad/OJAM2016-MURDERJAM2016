@@ -274,6 +274,18 @@
         end.bg.height = size[1];
         end.addChild(end.bg);
         end.visible = false;
+        end.btn = new PIXI.Text("Click to retry",{
+            font:"bold 24px Georgia"
+        });
+        end.btn.anchor.x = 0.5;
+        end.btn.x = size[0]/2;
+        end.btn.y = size[1]-100;
+        end.btn.buttonMode = true;
+        end.btn.interactive = true;
+        end.btn.on("click", function(event){
+            window.location.reload();
+        });
+        end.addChild(end.btn);
         
         //game
         game.bg = new PIXI.Sprite(PIXI.loader.resources.bg.texture);
