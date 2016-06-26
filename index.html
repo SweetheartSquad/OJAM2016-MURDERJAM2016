@@ -54,11 +54,18 @@
         .add("assets/intro_1.png")
         .add("assets/intro_2.png")
         .add("assets/intro_3.png")
+        .add("assets/end_bad_0.png")
+        .add("assets/end_bad_1.png")
+        .add("assets/end_good_0.png")
+        .add("assets/end_good_1.png")
+        .add("assets/end_final.png")
         .add("bg", "assets/bg.png")
         .add("speechBubble", "assets/speechBubble.png")
+        .add("dialog", "assets/dialog.png")
         .add("btnListen", "assets/btns/listen.png")
         .add("btnBio", "assets/btns/bio.png")
         .add("btnX", "assets/btns/x.png")
+        .add("btnCheck", "assets/btns/check.png")
         .add("btnAccuse", "assets/btns/accuse.png")
         .add("bioBg", "assets/bioBg.png")
         .add("assets/textures.json")
@@ -153,19 +160,24 @@
             ]
         }
     };
-    currentJammer = null;
+    killer = "bro";
     
     
     var menu = new PIXI.Container();
     menu.currentFrame = 0;
+    var endGood = new PIXI.Container();
+    endGood.currentFrame = 0;
+    var endBad = new PIXI.Container();
+    endBad.currentFrame = 0;
     var game = new PIXI.Container();
+    var end = new PIXI.Container();
     
     function setup(){
         // called when loader completes
         console.log("All files loaded");
 
 
-        
+        // intro slideshow
         menu.frames = [];
         for(var i = 0; i <= 3; ++i){
             var sprite = new PIXI.Sprite(PIXI.utils.TextureCache["assets/intro_"+i+".png"]);
@@ -177,19 +189,76 @@
             menu.frames.push(sprite);
             menu.addChild(sprite);
         }
-        menuClick = new PIXI.Text("Click to continue",{
+        menu.btn = new PIXI.Text("Click to continue",{
             font:"bold 24px Georgia"
         });
-        menuClick.anchor.x = 0.5;
-        menuClick.x = size[0]/2;
-        menuClick.y = size[1]-100;
-        menuClick.buttonMode = true;
-        menuClick.interactive = true;
-        menuClick.on("click", nextFrame);
-        menu.addChild(menuClick);
+        menu.btn.anchor.x = 0.5;
+        menu.btn.x = size[0]/2;
+        menu.btn.y = size[1]-100;
+        menu.btn.buttonMode = true;
+        menu.btn.interactive = true;
+        menu.btn.on("click", nextFrame.bind(menu));
+        menu.addChild(menu.btn);
         
         
+        //ending slideshows
+        endGood.frames = [];
+        for(var i = 0; i <= 1; ++i){
+            var sprite = new PIXI.Sprite(PIXI.utils.TextureCache["assets/end_good_"+i+".png"]);
+            sprite.width = size[0];
+            sprite.height = size[1];
+            if(i != 0){
+                sprite.visible = false;
+            }
+            endGood.frames.push(sprite);
+            endGood.addChild(sprite);
+        }
+        endGood.btn = new PIXI.Text("Click to continue",{
+            font:"bold 24px Georgia"
+        });
+        endGood.btn.anchor.x = 0.5;
+        endGood.btn.x = size[0]/2;
+        endGood.btn.y = size[1]-100;
+        endGood.btn.buttonMode = true;
+        endGood.btn.interactive = true;
+        endGood.btn.on("click", nextFrame.bind(endGood));
+        endGood.addChild(endGood.btn);
+        endGood.visible = false;
+
+
         
+        endBad.frames = [];
+        for(var i = 0; i <= 1; ++i){
+            var sprite = new PIXI.Sprite(PIXI.utils.TextureCache["assets/end_bad_"+i+".png"]);
+            sprite.width = size[0];
+            sprite.height = size[1];
+            if(i != 0){
+                sprite.visible = false;
+            }
+            endBad.frames.push(sprite);
+            endBad.addChild(sprite);
+        }
+        endBad.btn = new PIXI.Text("Click to continue",{
+            font:"bold 24px Georgia"
+        });
+        endBad.btn.anchor.x = 0.5;
+        endBad.btn.x = size[0]/2;
+        endBad.btn.y = size[1]-100;
+        endBad.btn.buttonMode = true;
+        endBad.btn.interactive = true;
+        endBad.btn.on("click", nextFrame.bind(endBad));
+        endBad.addChild(endBad.btn);
+        endBad.visible = false;
+        
+        
+        //ending
+        end.bg = new PIXI.Sprite(PIXI.utils.TextureCache["assets/end_final.png"]);
+        end.bg.width = size[0];
+        end.bg.height = size[1];
+        end.addChild(end.bg);
+        end.visible = false;
+        
+        //game
         game.bg = new PIXI.Sprite(PIXI.loader.resources.bg.texture);
         game.bg.width = size[0];
         game.bg.height = size[1];
@@ -280,7 +349,7 @@
             jammer.btnAccuse.x += 64;
             jammer.btnAccuse.buttonMode = true;
             jammer.btnAccuse.interactive = true;
-            jammer.btnAccuse.on("click", accuse.bind(jammer));
+            jammer.btnAccuse.on("click", openAccuseDialog.bind(jammer));
             jammer.btnAccuse.on("mouseover", onMouseOver.bind(jammer));
             jammer.btnAccuse.on("mouseout", onMouseOut);
             jammer.btngrp.addChild(jammer.btnAccuse);
@@ -307,6 +376,7 @@
             }
         }
 
+        // speech bubble
         speechBubble = new PIXI.Sprite(PIXI.loader.resources.speechBubble.texture);
         speechBubble.width = size[0];
         speechBubble.height = size[1];
@@ -323,7 +393,7 @@
         feed.charOffset = 0;
         game.addChild(feed);
 
-        
+        // bio popup
         bio = new PIXI.Container();
         bio.bg = new PIXI.Sprite(PIXI.loader.resources.bioBg.texture);
         bio.bg.width = size[0];
@@ -382,12 +452,58 @@
         bio.addChild(bio.btnX);
         game.addChild(bio);
         
+        
+        
+        // accuse dialog
+        accuseDialog = new PIXI.Container();
+        accuseDialog.bg = new PIXI.Sprite(PIXI.loader.resources.dialog.texture);
+        accuseDialog.bg.width = size[0];
+        accuseDialog.bg.height = size[1];
+        accuseDialog.addChild(accuseDialog.bg);
+        
+        accuseDialog.label = new PIXI.Text("Name: ",{
+            font:"bold 24px Georgia"
+        });
+        accuseDialog.label.anchor.x = 0.5;
+        accuseDialog.label.x = size[0]*0.5;
+        accuseDialog.label.y = size[1]*0.33;
+        accuseDialog.addChild(accuseDialog.label);
+        
+        accuseDialog.btnCheck = new PIXI.Sprite(PIXI.loader.resources.btnCheck.texture);
+        accuseDialog.btnCheck.anchor.x = 0.5;
+        accuseDialog.btnCheck.x = size[0]*0.45;
+        accuseDialog.btnCheck.y = size[1]*0.4;
+        accuseDialog.btnCheck.buttonMode = true;
+        accuseDialog.btnCheck.interactive = true;
+        accuseDialog.btnCheck.on("click", accuse);
+        accuseDialog.btnCheck.on("mouseover", onMouseOver);
+        accuseDialog.btnCheck.on("mouseout", onMouseOut);
+        accuseDialog.addChild(accuseDialog.btnCheck);
+        
+        accuseDialog.btnX = new PIXI.Sprite(PIXI.loader.resources.btnX.texture);
+        accuseDialog.btnX.anchor.x = 0.5;
+        accuseDialog.btnX.x = size[0]*0.55;
+        accuseDialog.btnX.y = size[1]*0.4;
+        accuseDialog.btnX.buttonMode = true;
+        accuseDialog.btnX.interactive = true;
+        accuseDialog.btnX.on("click", closeAccuseDialog);
+        accuseDialog.btnX.on("mouseover", onMouseOver);
+        accuseDialog.btnX.on("mouseout", onMouseOut);
+        accuseDialog.addChild(accuseDialog.btnX);
+        game.addChild(accuseDialog);
+        
+        
+        
         scene.addChild(menu);
         scene.addChild(game);
+        scene.addChild(endGood);
+        scene.addChild(endBad);
+        scene.addChild(end);
         game.visible = false;
         
         onResize();
         closeBio();
+        closeAccuseDialog();
         main();
     }
     
@@ -408,28 +524,32 @@
     
     
     function nextFrame(){
-        menu.frames[menu.currentFrame].visible = false;
-        menu.currentFrame += 1;
-        if(menu.currentFrame < menu.frames.length){
-            menu.frames[menu.currentFrame].visible = true;
+        this.frames[this.currentFrame].visible = false;
+        this.currentFrame += 1;
+        if(this.currentFrame < this.frames.length){
+            this.frames[this.currentFrame].visible = true;
         }else{
-            menu.visible = false;
-            game.visible = true;
+            this.visible = false;
+            if(this == menu){
+                game.visible = true;
+            }else{
+                end.visible = true;
+            }
         }
     }
     
     function sayNextLine(event){
-        var switched = currentJammer != this;
-        currentJammer = this;
+        var switched = feed.jammer != this;
+        feed.jammer = this;
         currentLine += 1;
-        if(currentLine < currentJammer.lines.length){
-            feed.targetText = currentJammer.lines[currentLine];
+        if(currentLine < feed.jammer.lines.length){
+            feed.targetText = feed.jammer.lines[currentLine];
         }else{
             feed.targetText = getEnder();
         }
-        feed.text = currentJammer.name + ":\n" + (switched ? getStarter() : "");
+        feed.text = feed.jammer.name + ":\n" + (switched ? getStarter() : "");
         feed.charOffset = 0;
-        feed.style.fill = currentJammer.color;
+        feed.style.fill = feed.jammer.color;
             
     }
     function viewBio(event){
@@ -443,8 +563,25 @@
     function closeBio(event){
         bio.visible = false;
     }
+    
+    function openAccuseDialog(event){
+        accuseDialog.visible = true;
+        accuseDialog.jammer = this;
+        accuseDialog.label.text = "Accuse " + accuseDialog.jammer.name + " of murder?";
+    }
+    function closeAccuseDialog(event){
+        accuseDialog.visible = false;
+    }
+    
+    // switch to the good end or the bad end depending on
+    // whether the killer was correctly accused
     function accuse(event){
-        // do something
+        game.visible = false;
+        if(accuseDialog.jammer == jammers[killer]){
+            endGood.visible = true;
+        }else{
+            endBad.visible = true;
+        }
     }
     
     
