@@ -70,7 +70,7 @@
             </struct>
         </struct>
         <key>shapePadding</key>
-        <uint>0</uint>
+        <uint>20</uint>
         <key>jpgQuality</key>
         <uint>80</uint>
         <key>pngOptimizationLevel</key>
@@ -188,18 +188,18 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
-            <key type="filename">austin.png</key>
-            <key type="filename">austin2.png</key>
-            <key type="filename">brrrrdd.png</key>
-            <key type="filename">brrrrdd2.png</key>
-            <key type="filename">hazel.png</key>
-            <key type="filename">hazel2.png</key>
-            <key type="filename">jess.png</key>
-            <key type="filename">jess2.png</key>
-            <key type="filename">kevin.png</key>
-            <key type="filename">kevin2.png</key>
-            <key type="filename">mackenzie.png</key>
-            <key type="filename">mackenzie2.png</key>
+            <key type="filename">app_0.png</key>
+            <key type="filename">app_1.png</key>
+            <key type="filename">art_0.png</key>
+            <key type="filename">art_1.png</key>
+            <key type="filename">bro_0.png</key>
+            <key type="filename">bro_1.png</key>
+            <key type="filename">new_0.png</key>
+            <key type="filename">new_1.png</key>
+            <key type="filename">odd_0.png</key>
+            <key type="filename">odd_1.png</key>
+            <key type="filename">pro_0.png</key>
+            <key type="filename">pro_1.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -207,18 +207,18 @@
         </map>
         <key>fileList</key>
         <array>
-            <filename>brrrrdd.png</filename>
-            <filename>brrrrdd2.png</filename>
-            <filename>hazel.png</filename>
-            <filename>hazel2.png</filename>
-            <filename>jess.png</filename>
-            <filename>jess2.png</filename>
-            <filename>kevin.png</filename>
-            <filename>kevin2.png</filename>
-            <filename>mackenzie.png</filename>
-            <filename>mackenzie2.png</filename>
-            <filename>austin.png</filename>
-            <filename>austin2.png</filename>
+            <filename>app_0.png</filename>
+            <filename>app_1.png</filename>
+            <filename>art_0.png</filename>
+            <filename>art_1.png</filename>
+            <filename>bro_0.png</filename>
+            <filename>bro_1.png</filename>
+            <filename>new_0.png</filename>
+            <filename>new_1.png</filename>
+            <filename>odd_0.png</filename>
+            <filename>odd_1.png</filename>
+            <filename>pro_0.png</filename>
+            <filename>pro_1.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>
